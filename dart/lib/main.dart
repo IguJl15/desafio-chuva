@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'common/injection.dart';
 
-void main() {
-  configureDependencies();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await configureDependencies();
   runApp(const ChuvaDart());
 }
 
