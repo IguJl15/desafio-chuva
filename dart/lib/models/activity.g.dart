@@ -120,7 +120,9 @@ Map<String, dynamic> _$PessoaToJson(Pessoa instance) => <String, dynamic>{
 
 Papel _$PapelFromJson(Map<String, dynamic> json) => Papel(
       id: json['id'] as int,
-      title: LocatedField.fromJson(json['title'] as Map<String, dynamic>),
+      title: json['title'] == null
+          ? null
+          : LocatedField.fromJson(json['title'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PapelToJson(Papel instance) => <String, dynamic>{

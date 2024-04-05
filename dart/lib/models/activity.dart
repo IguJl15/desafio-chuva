@@ -145,11 +145,11 @@ class Pessoa {
 @JsonSerializable()
 class Papel {
   final int id;
-  final LocatedField title;
+  final LocatedField? title;
 
   Papel({
     required this.id,
-    required this.title,
+    this.title,
   });
 
   factory Papel.fromJson(Map<String, dynamic> json) => _$PapelFromJson(json);
