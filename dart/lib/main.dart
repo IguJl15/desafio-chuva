@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'common/injection.dart';
+import 'ui/home_page/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +22,7 @@ class ChuvaDart extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Calendar(),
+      home: const HomePage(),
     );
   }
 }
