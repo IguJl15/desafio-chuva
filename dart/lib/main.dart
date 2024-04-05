@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'common/injection.dart';
+
 void main() {
+  configureDependencies();
   runApp(const ChuvaDart());
 }
 
