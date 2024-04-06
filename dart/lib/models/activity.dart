@@ -22,6 +22,8 @@ class Activity {
   final String event;
   final List<Activity> subActivities = [];
 
+  static const emptyTitleWarning = "Atividade sem título";
+
   Activity({
     required this.id,
     required this.changed,
@@ -180,7 +182,7 @@ class LocatedField {
 
   LocatedField(this.locale, this._values);
 
-  String get value => _values[locale] ?? _values[defaultLocale]!;
+  String? get value => _values[locale] ?? _values[defaultLocale];
 
   factory LocatedField.fromJson(Map<String, dynamic> json) {
     assert(json.isNotEmpty);
@@ -192,5 +194,5 @@ class LocatedField {
     );
   }
 
-  Map<String, String> toJson() => {locale: value};
+  Map<String, dynamic> toJson() => {locale: value};
 }

@@ -1,11 +1,14 @@
 import 'dart:developer';
 
-import 'package:chuva_dart/common/injection.dart';
-import 'package:chuva_dart/models/activity.dart';
-import 'package:chuva_dart/ui/cubits/activities_cubit.dart';
-import 'package:chuva_dart/ui/home_page/components/activity_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../common/injection.dart';
+import '../../common/utils.dart';
+import '../cubits/activities_cubit.dart';
+import '../details_page/activity_details_page.dart';
+import 'components/activity_card.dart';
+import 'components/dates_tab_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,54 +47,21 @@ class _HomePageState extends State<HomePage> {
                           return Container();
                         }
 
-                        final dates = state.activities.map(simplifiedDate).toSet().toList()
-                          ..sort((a, b) => a.compareTo(b));
+                        final dates =
+                            state.activities.map((act) => simplifiedDateTime(act.start)).toList();
 
                         currentDateFilter ??= dates.firstOrNull;
                         if (!dates.contains(currentDateFilter)) {
                           currentDateFilter = dates.firstOrNull;
                         }
 
-                        final MaterialLocalizations localizations =
-                            MaterialLocalizations.of(context);
-                        final month = currentDateFilter != null
-                            ? localizations.formatShortMonthDay(currentDateFilter!).split(" ")[0]
-                            : "";
-                        final year = currentDateFilter != null
-                            ? localizations.formatYear(currentDateFilter!)
-                            : "";
-
-                        return DefaultTabController(
-                          initialIndex:
-                              currentDateFilter != null ? dates.indexOf(currentDateFilter!) : 0,
-                          length: dates.length,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Text(
-                                  "$month\n$year",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                              ),
-                              Flexible(
-                                child: TabBar(
-                                  onTap: (index) => setState(() {
-                                    log("foo");
-                                    currentDateFilter = dates[index];
-                                  }),
-                                  isScrollable: true,
-                                  tabAlignment: TabAlignment.start,
-                                  tabs: dates
-                                      .map((e) => Tab(
-                                            text: "${e.day}",
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                            ],
-                          ),
+                        return DatesTabBar(
+                          dates: dates,
+                          selectedDate: currentDateFilter ?? DateTime.now(),
+                          onDateSelect: (date) => setState(() {
+                            log("foo");
+                            currentDateFilter = date;
+                          }),
                         );
                       }),
                 ),
@@ -107,14 +77,21 @@ class _HomePageState extends State<HomePage> {
                 builder: (context, state) {
                   switch (state) {
                     case ActivitiesListSuccess(:final activities):
-                      final date = currentDateFilter ?? simplifiedDate(activities.first);
+                      if (activities.isEmpty) {
+                        return const Center(child: Text("Sem atividades"));
+                      }
+
+                      final date = currentDateFilter ?? simplifiedDateTime(activities.first.start);
                       final filteredActivities =
-                          activities.where((act) => date == simplifiedDate(act));
+                          activities.where((act) => date == simplifiedDateTime(act.start));
+
                       return ListView(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                         children: List.generate(
                           filteredActivities.length,
                           (index) => ActivityCard(
                             filteredActivities.elementAt(index),
+                            onTap: (act) {},
                           ),
                         ),
                       );
@@ -134,9 +111,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  DateTime simplifiedDate(Activity activity) =>
-      DateTime(activity.start.year, activity.start.month, activity.start.day);
 
   bool stateShouldRebuildUi(_, state) =>
       state is ActivitiesListSuccess || state is ActivitiesListLoading;

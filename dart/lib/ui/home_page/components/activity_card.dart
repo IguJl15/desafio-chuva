@@ -3,15 +3,17 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../common/utils.dart';
 import '../../../models/activity.dart';
 
 class ActivityCard extends StatelessWidget {
   final Activity activity;
-  const ActivityCard(this.activity, {super.key});
+  final Function(Activity) onTap;
+  const ActivityCard(this.activity, {required this.onTap, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final card = _Card(activity: activity, onTap: () {});
+    final card = _Card(activity: activity, onTap: () => onTap(activity));
 
     if (activity.subActivities.isEmpty) {
       return card;
@@ -58,8 +60,9 @@ class _Card extends StatelessWidget {
     final startTime = TimeOfDay.fromDateTime(activity.start);
     final endTime = TimeOfDay.fromDateTime(activity.end);
 
-    final borderColorHex =
-        0xFF000000 | (int.tryParse(activity.category.color?.substring(1) ?? "", radix: 16) ?? 0);
+    final color = activity.category.color != null
+        ? Color(colorCodeFromCss(activity.category.color!))
+        : Colors.black;
 
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
@@ -79,7 +82,7 @@ class _Card extends StatelessWidget {
               left: BorderSide(
                 width: 5,
                 style: BorderStyle.solid,
-                color: Color(borderColorHex),
+                color: color,
               ),
             ),
           ),
@@ -99,7 +102,7 @@ class _Card extends StatelessWidget {
                 ],
               ),
               Text(
-                activity.title.value,
+                activity.title.value ?? Activity.emptyTitleWarning,
                 style: textTheme.bodyLarge,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

@@ -14,6 +14,8 @@ class ActivitiesCubit extends Cubit<ActivitiesListState> {
 
     emit(ActivitiesListLoading());
 
+    await Future.delayed(const Duration(milliseconds: 700));
+
     try {
       final activities = await _repository.fetchActivities(page);
 
@@ -32,7 +34,7 @@ class ActivitiesListInitialState extends ActivitiesListState {}
 class ActivitiesListLoading extends ActivitiesListState {}
 
 class ActivitiesListSuccess extends ActivitiesListState {
-  List<Activity> activities;
+  final List<Activity> activities;
 
   ActivitiesListSuccess({required this.activities});
 }
