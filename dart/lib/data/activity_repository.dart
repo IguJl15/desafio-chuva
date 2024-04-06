@@ -48,7 +48,25 @@ class MockedActivityRepository implements ActivityRepository {
 
     final List<dynamic> activitiesJsonList = data["data"];
 
-    final activitiesList = activitiesJsonList.map((e) => Activity.fromJson(e));
+    final activitiesList = activitiesJsonList.map((e) => Activity.fromJson(e)).toList();
+
+    // FIXME: only sub activities listed in this page are added to its parent activity
+    //  Example:
+    //  If a activity A has sub activities X and Y but Y is only listed in the next
+    //  page, it will not be added to the sub activities list
+    final subActivitiesList = [];
+
+    for (final act in activitiesList) {
+      if (act.parent == null) continue;
+
+      final parent = activitiesList.where((element) => element.id == act.parent).singleOrNull;
+      if (parent == null) continue;
+
+      parent.subActivities.add(act);
+      subActivitiesList.add(act);
+    }
+
+    activitiesList.removeWhere((e) => subActivitiesList.contains(e));
 
     return activitiesList;
   }

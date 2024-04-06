@@ -20,6 +20,7 @@ class Activity {
   final Addons? addons;
   final int? parent;
   final String event;
+  final List<Activity> subActivities = [];
 
   Activity({
     required this.id,

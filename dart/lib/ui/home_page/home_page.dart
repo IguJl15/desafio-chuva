@@ -16,44 +16,47 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ActivitiesCubit(getIt())..fetchActivitiesFromPage(),
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Column(
-            children: [
-              Text("Chuva 💜 Flutter"),
-              Text("Programação"),
+      child: Builder(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Column(
+              children: [
+                Text("Chuva 💜 Flutter"),
+                Text("Programação"),
+              ],
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () => context.read<ActivitiesCubit>().fetchActivitiesFromPage(),
+                  icon: const Icon(Icons.refresh))
             ],
           ),
-          actions: [
-            IconButton(
-                onPressed: () => context.read<ActivitiesCubit>().fetchActivitiesFromPage(),
-                icon: const Icon(Icons.refresh))
-          ],
-        ),
-        body: BlocConsumer<ActivitiesCubit, ActivitiesListState>(
-          listener: _cubitListener,
-          buildWhen: (_, state) => state is ActivitiesListSuccess || state is ActivitiesListLoading,
-          builder: (context, state) {
-            switch (state) {
-              case ActivitiesListSuccess(:final activities):
-                return ListView(
-                  children: List.generate(
-                    activities.length,
-                    (index) => ActivityCard(
-                      activities[index],
+          body: BlocConsumer<ActivitiesCubit, ActivitiesListState>(
+            listener: _cubitListener,
+            buildWhen: (_, state) =>
+                state is ActivitiesListSuccess || state is ActivitiesListLoading,
+            builder: (context, state) {
+              switch (state) {
+                case ActivitiesListSuccess(:final activities):
+                  return ListView(
+                    children: List.generate(
+                      activities.length,
+                      (index) => ActivityCard(
+                        activities[index],
+                      ),
                     ),
-                  ),
-                );
-              case ActivitiesListLoading():
-              case ActivitiesListInitialState():
-                return const Center(child: CircularProgressIndicator.adaptive());
-              case ActivitiesListError():
-                throw AssertionError(
-                  "UI should not be updated when the state is ActivitiesListError",
-                );
-            }
-          },
+                  );
+                case ActivitiesListLoading():
+                case ActivitiesListInitialState():
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                case ActivitiesListError():
+                  throw AssertionError(
+                    "UI should not be updated when the state is ActivitiesListError",
+                  );
+              }
+            },
+          ),
         ),
       ),
     );
