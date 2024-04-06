@@ -91,7 +91,12 @@ class _HomePageState extends State<HomePage> {
                           filteredActivities.length,
                           (index) => ActivityCard(
                             filteredActivities.elementAt(index),
-                            onTap: (act) {},
+                            onTap: (act) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ActivityDetailsPage(act)),
+                              );
+                            },
                           ),
                         ),
                       );
