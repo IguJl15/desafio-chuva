@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'common/injection.dart';
+import 'ui/cubits/activities_cubit.dart';
+import 'ui/cubits/bookmark_cubit.dart';
 import 'ui/details_page/activity_details_page.dart';
 import 'ui/home_page/home_page.dart';
 import 'ui/person_page/person_page.dart';
@@ -22,31 +25,37 @@ class ChuvaDart extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      locale: const Locale("pt"),
-      supportedLocales: const [
-        Locale("pt"),
-        Locale("en"),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ActivitiesCubit(getIt())..fetchActivitiesFromPage()),
+        BlocProvider(create: (_) => BookmarkCubit(getIt())..loadInitialData()),
       ],
-      localizationsDelegates: const [
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        appBarTheme: const AppBarTheme(centerTitle: true),
-        useMaterial3: true,
+      child: MaterialApp.router(
+        title: 'Flutter Demo',
+        locale: const Locale("pt"),
+        supportedLocales: const [
+          Locale("pt"),
+          Locale("en"),
+        ],
+        localizationsDelegates: const [
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          appBarTheme: const AppBarTheme(centerTitle: true),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          appBarTheme: const AppBarTheme(centerTitle: true),
+          useMaterial3: true,
+          brightness: Brightness.dark,
+        ),
+        themeMode: ThemeMode.system,
+        routerConfig: _router,
       ),
-      darkTheme: ThemeData(
-        appBarTheme: const AppBarTheme(centerTitle: true),
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.system,
-      routerConfig: _router,
     );
   }
 }
