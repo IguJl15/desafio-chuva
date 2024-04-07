@@ -30,12 +30,14 @@ class _HomePageState extends State<HomePage> {
             length: 2,
             child: Scaffold(
               appBar: AppBar(
-                centerTitle: true,
                 // backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                title: const Column(
+                title: Column(
                   children: [
                     Text("Chuva 💜 Flutter"),
-                    Text("Programação"),
+                    Text(
+                      "Programação",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ],
                 ),
                 bottom: PreferredSize(
@@ -58,10 +60,11 @@ class _HomePageState extends State<HomePage> {
                         return DatesTabBar(
                           dates: dates,
                           selectedDate: currentDateFilter ?? DateTime.now(),
-                          onDateSelect: (date) => setState(() {
-                            log("foo");
-                            currentDateFilter = date;
-                          }),
+                          onDateSelect: (date) {
+                            setState(() {
+                              currentDateFilter = date;
+                            });
+                          },
                         );
                       }),
                 ),

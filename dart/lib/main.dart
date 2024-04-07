@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'common/injection.dart';
 import 'ui/details_page/activity_details_page.dart';
 import 'ui/home_page/home_page.dart';
+import 'ui/person_page/person_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,12 +24,27 @@ class ChuvaDart extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Flutter Demo',
+      locale: const Locale("pt"),
+      supportedLocales: const [
+        Locale("pt"),
+        Locale("en"),
+      ],
+      localizationsDelegates: const [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(
-        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        appBarTheme: const AppBarTheme(centerTitle: true),
         useMaterial3: true,
       ),
-      darkTheme: ThemeData.dark(useMaterial3: true),
+      darkTheme: ThemeData(
+        appBarTheme: const AppBarTheme(centerTitle: true),
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
       themeMode: ThemeMode.system,
       routerConfig: _router,
     );
@@ -41,15 +58,15 @@ final _router = GoRouter(
       builder: (_, __) => const HomePage(),
       routes: [
         GoRoute(
-          path: 'activity/:id',
-          name: "activity-details",
+            path: 'activity/:id',
+            name: "activity-details",
             builder: (context, state) {
-            final id = state.pathParameters["id"];
-            final intId = int.tryParse(id ?? "0") ?? 0;
+              final id = state.pathParameters["id"];
+              final intId = int.tryParse(id ?? "0") ?? 0;
 
               return ActivityDetailsPage.activityPageBuilder(context, intId);
-          },
-          redirect: invalidIdRedirect,
+            },
+            redirect: invalidIdRedirect,
             routes: [
               GoRoute(
                 path: 'person/:personId',

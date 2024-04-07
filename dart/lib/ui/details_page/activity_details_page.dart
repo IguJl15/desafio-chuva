@@ -81,7 +81,10 @@ class _Body extends StatelessWidget {
         if (activity.description.value != null)
           Padding(
             padding: defaultVerticalPadding,
-            child: HtmlWidget(activity.description.value!),
+            child: HtmlWidget(
+              activity.description.value!,
+              textStyle: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
 
         if (activity.subActivities.isNotEmpty)
