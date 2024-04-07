@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:chuva_dart/ui/details_page/activity_details_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'common/injection.dart';
 import 'ui/home_page/home_page.dart';
@@ -16,16 +20,65 @@ class ChuvaDart extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.light(
+        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: ThemeMode.system,
+      routerConfig: _router,
     );
   }
 }
+
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (_, __) => const HomePage(),
+      routes: [
+        GoRoute(
+          path: 'activity/:id',
+          name: "activity-details",
+          builder: (_, state) {
+            final id = state.pathParameters["id"];
+            final intId = int.tryParse(id ?? "0") ?? 0;
+
+            return ActivityDetailsPage(activityId: intId);
+          },
+          redirect: invalidIdRedirect,
+        ),
+      ],
+    ),
+    GoRoute(
+      name: "not-found",
+      path: "/404",
+      builder: (context, __) => Scaffold(
+        appBar: AppBar(
+          leading: BackButton(onPressed: () => context.go("/")),
+        ),
+        body: const Text("Página não encontrada"),
+      ),
+    )
+  ],
+);
+
+FutureOr<String?> invalidIdRedirect(BuildContext context, GoRouterState state) {
+  if ((int.tryParse(state.pathParameters["id"] ?? "0") ?? 0) == 0) {
+    return "/404";
+  } else {
+    return null;
+  }
+}
+
+//
+
+//
+
+//
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -55,28 +108,17 @@ class _CalendarState extends State<Calendar> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Programação',
-            ),
-            const Text(
-              'Nov',
-            ),
-            const Text(
-              '2023',
-            ),
+            const Text('Programação'),
+            const Text('Nov'),
+            const Text('2023'),
             OutlinedButton(
               onPressed: () {
                 _changeDate(DateTime(2023, 11, 26));
               },
-              child: Text(
-                '26',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              child: Text('26', style: Theme.of(context).textTheme.headlineMedium),
             ),
             OutlinedButton(
-              onPressed: () {
-                _changeDate(DateTime(2023, 11, 28));
-              },
+              onPressed: () => _changeDate(DateTime(2023, 11, 28)),
               child: Text(
                 '28',
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -92,11 +134,7 @@ class _CalendarState extends State<Calendar> {
                   child: const Text('Mesa redonda de 07:00 até 08:00')),
             if (_currentDate.day == 28)
               OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      _clicked = true;
-                    });
-                  },
+                  onPressed: () => setState(() => _clicked = true),
                   child: const Text('Palestra de 09:30 até 10:00')),
             if (_currentDate.day == 26 && _clicked) const Activity(),
           ],
@@ -137,11 +175,8 @@ class _ActivityState extends State<Activity> {
               _favorited = !_favorited;
             });
           },
-          icon: _favorited
-              ? const Icon(Icons.star)
-              : const Icon(Icons.star_outline),
-          label: Text(
-              _favorited ? 'Remover da sua agenda' : 'Adicionar à sua agenda'),
+          icon: _favorited ? const Icon(Icons.star) : const Icon(Icons.star_outline),
+          label: Text(_favorited ? 'Remover da sua agenda' : 'Adicionar à sua agenda'),
         )
       ]),
     );

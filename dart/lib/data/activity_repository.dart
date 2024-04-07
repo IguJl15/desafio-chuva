@@ -7,6 +7,7 @@ import '../models/activity.dart';
 
 abstract interface class ActivityRepository {
   Future<Iterable<Activity>> fetchActivities([page = 1]);
+  Future<Activity?> getActivityById(int id);
 }
 
 @Singleton(as: ActivityRepository)
@@ -15,7 +16,7 @@ class MockedActivityRepository implements ActivityRepository {
 
   final AssetsManager assetsManager;
 
-  late final Iterable<Map<String, dynamic>> _activities;
+  late final Iterable<Map<String, dynamic>> _activitiesPages;
 
   /// resources: Assets location for the activities fixture json files that will be loaded and processed
   @PostConstruct(preResolve: true)
@@ -35,14 +36,14 @@ class MockedActivityRepository implements ActivityRepository {
       ),
     );
 
-    _activities = jsonFilesStrings.map((e) => json.decode(e));
+    _activitiesPages = jsonFilesStrings.map((e) => json.decode(e));
   }
 
   @override
   Future<Iterable<Activity>> fetchActivities([page = 1]) async {
     assert(page > 0);
 
-    final data = _activities.elementAtOrNull(page - 1);
+    final data = _activitiesPages.elementAtOrNull(page - 1);
 
     if (data == null) return [];
 
@@ -69,5 +70,27 @@ class MockedActivityRepository implements ActivityRepository {
     activitiesList.removeWhere((e) => subActivitiesList.contains(e));
 
     return activitiesList;
+  }
+
+  @override
+  Future<Activity?> getActivityById(int id) async {
+    Activity? activity;
+    List<Activity> activitiesWithParent = [];
+
+    for (var page in _activitiesPages) {
+      for (var activityJson in page['data']) {
+        if (activityJson['id'] == id) {
+          activity = Activity.fromJson(activityJson);
+        }
+        if (activityJson['parent'] != null) {
+          activitiesWithParent.add(Activity.fromJson(activityJson));
+        }
+      }
+    }
+
+    return activity
+      ?..subActivities.addAll(
+        activitiesWithParent.where((element) => element.parent == activity?.id),
+      );
   }
 }

@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/injection.dart';
 import '../../common/utils.dart';
 import '../cubits/activities_cubit.dart';
-import '../details_page/activity_details_page.dart';
 import 'components/activity_card.dart';
 import 'components/dates_tab_bar.dart';
 
@@ -92,10 +92,7 @@ class _HomePageState extends State<HomePage> {
                           (index) => ActivityCard(
                             filteredActivities.elementAt(index),
                             onTap: (act) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => ActivityDetailsPage(act)),
-                              );
+                              context.go('/activity/${act.id}');
                             },
                           ),
                         ),
