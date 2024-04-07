@@ -13,21 +13,32 @@ class BookmarkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<BookmarkCubit>();
+
+    //https://m3.material.io/components/buttons/specs#:~:text=with%20icon%20disabled-,icon%20opacity,-%2D
+    final circularProgressIndicatorColor =
+        Theme.of(context).colorScheme.onSurface.withOpacity(0.38);
+
     return BookmarkBuilder(
       activityId: activity.id,
       unmarkedWidget: FilledButton.icon(
         onPressed: () => cubit.bookmark(activity),
-        icon: const Icon(Icons.bookmark_outline),
+        icon: const Icon(Icons.star_outline),
         label: const Text("Adicionar à sua agenda"),
       ),
       loadingWidget: FilledButton.icon(
         onPressed: null,
-        icon: const SizedBox.square(dimension: 16, child: CircularProgressIndicator.adaptive()),
+        icon: SizedBox.square(
+          dimension: 16,
+          child: CircularProgressIndicator(
+            color: circularProgressIndicatorColor,
+            strokeWidth: 2,
+          ),
+        ),
         label: const Text("Processando"),
       ),
       markedWidget: FilledButton.icon(
         onPressed: () => cubit.removeBookmark(activity),
-        icon: const Icon(Icons.bookmark_rounded),
+        icon: const Icon(Icons.star),
         label: const Text("Remover da sua agenda"),
       ),
     );
