@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:chuva_dart/ui/details_page/activity_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'common/injection.dart';
+import 'ui/details_page/activity_details_page.dart';
 import 'ui/home_page/home_page.dart';
 
 void main() async {
@@ -43,11 +43,11 @@ final _router = GoRouter(
         GoRoute(
           path: 'activity/:id',
           name: "activity-details",
-          builder: (_, state) {
+            builder: (context, state) {
             final id = state.pathParameters["id"];
             final intId = int.tryParse(id ?? "0") ?? 0;
 
-            return ActivityDetailsPage(activityId: intId);
+              return ActivityDetailsPage.activityPageBuilder(context, intId);
           },
           redirect: invalidIdRedirect,
         ),

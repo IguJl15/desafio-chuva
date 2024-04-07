@@ -21,7 +21,9 @@ class SubActivities extends StatelessWidget {
         ...activity.subActivities.map((subAct) {
           return ActivityCard(
             subAct,
-            onTap: (act) => context.go('/activity/${act.id}'),
+            onTap: (act) {
+              context.push('/activity/${act.id}');
+            },
           );
         }),
       ],

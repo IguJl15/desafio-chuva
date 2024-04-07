@@ -1,11 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../common/app_exception.dart';
 import '../../common/injection.dart';
+import '../../common/page_future_builder.dart';
 import '../../data/activity_repository.dart';
 import '../../models/activity.dart';
 import 'components/activity_information.dart';
@@ -13,70 +11,38 @@ import 'components/category_label.dart';
 import 'components/speakers_list.dart';
 import 'components/sub_activities_list.dart';
 
-class ActivityDetailsPage extends StatefulWidget {
-  const ActivityDetailsPage({required this.activityId, super.key});
-
-  final int activityId;
-
-  @override
-  State<ActivityDetailsPage> createState() => _ActivityDetailsPageState();
-}
-
-class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
-  late final Activity activity;
-  String error = "";
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        final repository = getIt<ActivityRepository>();
-
-        final act = await repository.getActivityById(widget.activityId);
-
-        if (act == null) {
-          if (mounted) context.goNamed("not-found");
-          return;
+class ActivityDetailsPage extends StatelessWidget {
+  static Widget activityPageBuilder(BuildContext context, int id) {
+    return PageBuilder<int, Activity?>(
+      key: const Key("activity-page-builder"),
+      arg: id,
+      future: (id) => getIt<ActivityRepository>().getActivityById(id),
+      builder: (_, data) {
+        if (data == null) {
+          context.go("not-found");
+          return Container();
+        } else {
+          return ActivityDetailsPage(activity: data);
         }
-
-        activity = act;
-        isLoading = false;
-        error = "";
-      } on AppError catch (e) {
-        error = e.message;
-        isLoading = false;
-      } catch (e) {
-        log("Error: ", error: e);
-
-        error = "Ocorreu um erro desconhecido";
-        isLoading = false;
-      } finally {
-        setState(() {});
-      }
-    });
+      },
+    );
   }
+
+  const ActivityDetailsPage({required this.activity, super.key});
+
+  final Activity activity;
 
   @override
   Widget build(BuildContext context) {
-    final ready = !(isLoading || error.isNotEmpty);
     final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
         title: const Text("Chuva 💜 Flutter"),
-        bottom: ready ? CategoryLabel(activity: activity) : null,
+        bottom: CategoryLabel(activity: activity),
       ),
-      body: ready
-          ? _Body(activity: activity)
-          : (isLoading
-              ? const Center(child: CircularProgressIndicator.adaptive())
-              : error.isNotEmpty
-                  ? Center(child: Text(error))
-                  : null),
+      body: _Body(activity: activity),
     );
   }
 }
@@ -124,7 +90,7 @@ class _Body extends StatelessWidget {
             child: SubActivities(activity: activity),
           ),
 
-        if (activity.people.isNotEmpty) SpeakersList(people: activity.people),
+        if (activity.people.isNotEmpty) SpeakersList(activity: activity, people: activity.people),
       ],
     );
   }
