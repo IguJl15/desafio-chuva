@@ -8,6 +8,8 @@ import '../models/activity.dart';
 abstract interface class ActivityRepository {
   Future<Iterable<Activity>> fetchActivities([page = 1]);
   Future<Activity?> getActivityById(int id);
+
+  Future<Pessoa?> getPersonById(int id);
 }
 
 @Singleton(as: ActivityRepository)
@@ -51,6 +53,7 @@ class MockedActivityRepository implements ActivityRepository {
 
     final activitiesList = activitiesJsonList.map((e) => Activity.fromJson(e)).toList();
 
+    // TODO: ignore pagination concatenating activities
     // FIXME: only sub activities listed in this page are added to its parent activity
     //  Example:
     //  If a activity A has sub activities X and Y but Y is only listed in the next
@@ -74,23 +77,47 @@ class MockedActivityRepository implements ActivityRepository {
 
   @override
   Future<Activity?> getActivityById(int id) async {
-    Activity? activity;
+    Activity? foundActivity;
     List<Activity> activitiesWithParent = [];
 
     for (var page in _activitiesPages) {
       for (var activityJson in page['data']) {
+        final activity = Activity.fromJson(activityJson);
         if (activityJson['id'] == id) {
-          activity = Activity.fromJson(activityJson);
+          foundActivity = activity;
         }
         if (activityJson['parent'] != null) {
-          activitiesWithParent.add(Activity.fromJson(activityJson));
+          activitiesWithParent.add(activity);
         }
       }
     }
 
-    return activity
+    return foundActivity
       ?..subActivities.addAll(
-        activitiesWithParent.where((element) => element.parent == activity?.id),
+        activitiesWithParent.where((element) => element.parent == foundActivity?.id),
       );
+  }
+
+  @override
+  Future<Pessoa?> getPersonById(int id) async {
+    // TODO: index all people, parent-subactivities relationships, etc on initialization
+
+    Pessoa? foundPerson;
+
+    for (var page in _activitiesPages) {
+      for (var activityJson in page['data']) {
+        final activity = Activity.fromJson(activityJson);
+
+        for (var person in activity.people) {
+          if (person.id == id) {
+            foundPerson ??= person;
+
+            foundPerson.activities.add(activity);
+          }
+        }
+      }
+    }
+
+    return foundPerson;
   }
 }

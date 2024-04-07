@@ -130,6 +130,7 @@ class Pessoa {
   final String? picture;
   final int weight;
   final Papel role;
+  final Set<Activity> activities = {};
 
   Pessoa({
     required this.id,

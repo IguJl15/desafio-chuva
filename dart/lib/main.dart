@@ -50,7 +50,18 @@ final _router = GoRouter(
               return ActivityDetailsPage.activityPageBuilder(context, intId);
           },
           redirect: invalidIdRedirect,
-        ),
+            routes: [
+              GoRoute(
+                path: 'person/:personId',
+                name: "person-details",
+                builder: (context, state) {
+                  final id = state.pathParameters["personId"];
+                  final intId = int.tryParse(id ?? "0") ?? 0;
+
+                  return PersonPage.personPageBuilder(context, intId);
+                },
+              ),
+            ]),
       ],
     ),
     GoRoute(
