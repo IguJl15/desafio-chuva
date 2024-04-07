@@ -24,6 +24,8 @@ class BookmarkCubit extends Cubit<BookmarkState> {
       () async {
         emit(BookmarkLoadingState());
 
+        await Future.delayed(const Duration(milliseconds: 400));
+
         final newList = await _bookmarkRepository.addBookmarkToActivity(activity.id);
 
         emit(BookmarkSuccessState(newList));

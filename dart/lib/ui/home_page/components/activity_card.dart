@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../common/utils.dart';
 import '../../../models/activity.dart';
+import '../../shared/bookmark_builder.dart';
 
 class ActivityCard extends StatelessWidget {
   final Activity activity;
@@ -98,7 +99,12 @@ class _Card extends StatelessWidget {
                       style: textTheme.labelMedium,
                     ),
                   ),
-                  Icon(Icons.bookmark_rounded, color: colorScheme.tertiary)
+                  BookmarkBuilder(
+                    activityId: activity.id,
+                    unmarkedWidget: null,
+                    loadingWidget: null,
+                    markedWidget: Icon(Icons.bookmark_rounded, color: colorScheme.tertiary),
+                  ),
                 ],
               ),
               Text(

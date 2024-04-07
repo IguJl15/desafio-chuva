@@ -7,6 +7,7 @@ import '../../common/page_future_builder.dart';
 import '../../data/activity_repository.dart';
 import '../../models/activity.dart';
 import 'components/activity_information.dart';
+import 'components/bookmark_button.dart';
 import 'components/category_label.dart';
 import 'components/speakers_list.dart';
 import 'components/sub_activities_list.dart';
@@ -65,19 +66,13 @@ class _Body extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.titleLarge,
         ),
-
         Padding(
           padding: defaultVerticalPadding / 2,
           child: ActivityInformation(activity: activity),
         ),
-
-        // TODO: Implement bookmarking
-        FilledButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.star),
-          label: const Text("Adicionar à sua agenda"),
+        BookmarkButton(
+          activity: activity,
         ),
-
         if (activity.description.value != null)
           Padding(
             padding: defaultVerticalPadding,
@@ -86,14 +81,16 @@ class _Body extends StatelessWidget {
               textStyle: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
-
         if (activity.subActivities.isNotEmpty)
           Padding(
             padding: defaultVerticalPadding,
             child: SubActivities(activity: activity),
           ),
-
-        if (activity.people.isNotEmpty) SpeakersList(activity: activity, people: activity.people),
+        if (activity.people.isNotEmpty)
+          SpeakersList(
+            activity: activity,
+            people: activity.people,
+          ),
       ],
     );
   }
