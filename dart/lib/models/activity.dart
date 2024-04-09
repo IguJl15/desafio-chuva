@@ -21,6 +21,7 @@ class Activity {
   final int? parent;
   final String event;
   final List<Activity> subActivities = [];
+  Activity? parentActivity = null;
 
   static const emptyTitleWarning = "Atividade sem título";
 

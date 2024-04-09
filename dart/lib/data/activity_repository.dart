@@ -92,6 +92,10 @@ class MockedActivityRepository implements ActivityRepository {
       }
     }
 
+    if (foundActivity?.parent != null) {
+      foundActivity!.parentActivity = await getActivityById(foundActivity.parent!);
+    }
+
     return foundActivity
       ?..subActivities.addAll(
         activitiesWithParent.where((element) => element.parent == foundActivity?.id),

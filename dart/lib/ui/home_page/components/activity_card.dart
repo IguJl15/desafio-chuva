@@ -58,8 +58,8 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final type = activity.type.title.value;
-    final startTime = TimeOfDay.fromDateTime(activity.start);
-    final endTime = TimeOfDay.fromDateTime(activity.end);
+    final startTime = TimeOfDay.fromDateTime(activity.start.toLocal());
+    final endTime = TimeOfDay.fromDateTime(activity.end.toLocal());
 
     final color = activity.category.color != null
         ? Color(colorCodeFromCss(activity.category.color!))

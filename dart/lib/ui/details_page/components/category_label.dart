@@ -12,7 +12,7 @@ class CategoryLabel extends StatelessWidget implements PreferredSizeWidget {
   final Activity activity;
 
   @override
-  Size get preferredSize => const Size.fromHeight(20);
+  Size get preferredSize => Size.fromHeight(activity.parentActivity != null ? 64 : 20);
 
   Color _foregroundColorFor(
     Color backgroundColor, [
@@ -35,14 +35,40 @@ class CategoryLabel extends StatelessWidget implements PreferredSizeWidget {
 
     Color textColor = _foregroundColorFor(categoryColor);
 
-    return Container(
-      color: categoryColor,
-      child: Center(
-        child: Text(
-          activity.category.title.value ?? "Sem categoria",
-          style: theme.textTheme.bodySmall?.copyWith(color: textColor, height: 1.75),
+    return Column(
+      children: [
+        Container(
+          color: categoryColor,
+          child: Center(
+            child: Text(
+              activity.category.title.value ?? "Sem categoria",
+              style: theme.textTheme.bodySmall?.copyWith(color: textColor, height: 1.75),
+            ),
+          ),
         ),
-      ),
+        if (activity.parent != null)
+          Container(
+            color: theme.colorScheme.primary,
+            child: Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(Icons.calendar_month_outlined, color: theme.colorScheme.onPrimary),
+                  ),
+                  Flexible(
+                    child: Text(
+                      'Essa atividade é parte de "${activity.parentActivity!.title.value}"',
+                      style:
+                          theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onPrimary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+      ],
     );
   }
 }

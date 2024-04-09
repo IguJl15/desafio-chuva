@@ -9,24 +9,31 @@ class PersonInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
           foregroundImage: person.picture != null ? NetworkImage(person.picture!) : null,
           radius: 48,
           child: const Icon(Icons.person),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Flexible(
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   person.name.trim(),
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                Text(person.institution?.trim() ?? "",
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w300)),
+                Text(
+                  person.institution?.trim() ?? "",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                ),
               ],
             ),
           ),

@@ -14,8 +14,8 @@ class ActivityInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final weekDay = weekdays[activity.start.weekday - DateTime.monday];
-    final startTime = TimeOfDay.fromDateTime(activity.start);
-    final endTime = TimeOfDay.fromDateTime(activity.end);
+    final startTime = TimeOfDay.fromDateTime(activity.start.toLocal());
+    final endTime = TimeOfDay.fromDateTime(activity.end.toLocal());
 
     const iconSize = 20.0;
     const xSmallSpace = SizedBox.square(dimension: 4);

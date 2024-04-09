@@ -59,15 +59,12 @@ class PersonPage extends StatelessWidget {
             ),
           //
           if (person.activities.isNotEmpty)
-            Padding(
-              padding: defaultVerticalPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Atividades", style: labelStyle),
-                  PersonActivities(person: person),
-                ],
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Atividades", style: labelStyle),
+                PersonActivities(person: person),
+              ],
             ),
         ],
       ),
